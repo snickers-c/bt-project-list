@@ -11,6 +11,12 @@
     - Time servis: [TimeSevice](prvy/app/Services/TimeService.php)
     - [RPC Time](#rpc-time)
     - [REST API Time](#rest-api-time)
+- [cvičenie 4](#cvičenie-4)
+  - Testing z Postman-a [Obrázky](postman-images/cvicenie4/)
+  - Zadanie
+    - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
+    - [REST API Notes](#rest-api-notes)
+    - [REST API Categories](#rest-api-categories)
 
 # Cvičenia
 
@@ -72,3 +78,52 @@ getTime
 ### REST API Time
 time
 ![image](/postman-images/cvicenie3/api-time/time.png)
+
+## Cvičenie 4
+
+### REST API Notes
+index
+![image](/postman-images/cvicenie4/notes/index.png)
+
+store
+![image](/postman-images/cvicenie4/notes/store.png)
+
+show
+![image](/postman-images/cvicenie4/notes/show.png)
+
+update
+![image](/postman-images/cvicenie4/notes/update.png)
+
+destroy
+![image](/postman-images/cvicenie4/notes/destroy.png)
+
+status
+![image](/postman-images/cvicenie4/notes/status.png)
+
+archive
+![image](/postman-images/cvicenie4/notes/archive.png)
+
+user
+![image](/postman-images/cvicenie4/notes/user.png)
+
+search
+![image](/postman-images/cvicenie4/notes/search.png)
+
+duplicate
+![image](/postman-images/cvicenie4/notes/duplicate.png)
+
+### REST API Categories
+index
+![image](/postman-images/cvicenie4/categories/index.png)
+
+store
+![image](/postman-images/cvicenie4/categories/store.png)
+
+show
+![image](/postman-images/cvicenie4/categories/show.png)
+
+update
+![image](/postman-images/cvicenie4/categories/update.png)
+
+destroy
+![image](/postman-images/cvicenie4/categories/destroy.png)
