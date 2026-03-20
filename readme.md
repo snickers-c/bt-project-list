@@ -17,6 +17,12 @@
     - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
     - [REST API Notes](#rest-api-notes)
     - [REST API Categories](#rest-api-categories)
+- [cvičenie 5](#cvičenie-5)
+  - Testing z Postman-a [Obrázky](postman-images/cvicenie5/)
+  - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
+  - Adresár modelov: [Models](druhy/app/Models/)
+  - Zadanie
+    - [Notes Eloquent ORM](#notes-eloquent-orm)
 
 # Cvičenia
 
@@ -127,3 +133,15 @@ update
 
 destroy
 ![image](/postman-images/cvicenie4/categories/destroy.png)
+
+## Cvičenie 5
+
+### Notes Eloquent ORM
+publish
+![image](/postman-images/cvicenie5/publish.png)
+archive
+![image](/postman-images/cvicenie5/archive.png)
+pin
+![image](/postman-images/cvicenie5/pin.png)
+unpin
+![image](/postman-images/cvicenie5/unpin.png)

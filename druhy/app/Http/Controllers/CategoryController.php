@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -13,8 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = DB::table('categories')
-            ->orderBy('name', 'asc')
+        $categories = Category::query()->orderBy('name', 'asc')
             ->get();
  
         return response()->json(['categories' => $categories], Response::HTTP_OK);
@@ -25,24 +26,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = DB::table('categories')
-            ->where('name', $request->name)
-            ->exists();
- 
-        if ($category) {
-            return response()->json([
-                'message' => 'Kategória s týmto názvom už existuje'
-            ], Response::HTTP_CONFLICT);
-        }
- 
-        DB::table('categories')->insert([
-            'name'       => $request->name,
-            'created_at' => now(),
-            'updated_at' => now(),
+        $category = Category::create([
+            'name' => $request->name,
+            'color' => $request->color,
         ]);
  
         return response()->json([
-            'message' => 'Kategória bola vytvorená'
+            'message' => 'Kategória bola vytvorená',
+            'category' => $category,
         ], Response::HTTP_CREATED);
     }
 
@@ -51,9 +42,7 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = DB::table('categories')
-            ->where('id', $id)
-            ->first();
+        $category = Category::find($id);
  
         if (!$category) {
             return response()->json([
@@ -69,9 +58,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $category = DB::table('categories')
-            ->where('id', $id)
-            ->first();
+        $category = Category::find($id);
  
         if (!$category) {
             return response()->json([
@@ -79,8 +66,7 @@ class CategoryController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
  
-        $exists = DB::table('categories')
-            ->where('name', $request->name)
+        $exists = Category::where('name', $request->name)
             ->where('id', '!=', $id)
             ->exists();
  
@@ -90,12 +76,11 @@ class CategoryController extends Controller
             ], Response::HTTP_CONFLICT);
         }
  
-        DB::table('categories')
-            ->where('id', $id)
-            ->update([
-                'name'       => $request->name,
-                'updated_at' => now(),
-            ]);
+        $category->update([
+            'name' => $request->name,
+            'color' => $request->color,
+            'updated_at' => now(),
+        ]);
  
         return response()->json([
             'message' => 'Kategória bola aktualizovaná'
@@ -107,9 +92,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = DB::table('categories')
-            ->where('id', $id)
-            ->first();
+        $category = Category::find($id);
  
         if (!$category) {
             return response()->json([
@@ -127,7 +110,7 @@ class CategoryController extends Controller
             ], Response::HTTP_CONFLICT);
         }
  
-        DB::table('categories')->where('id', $id)->delete();
+        $category->forceDelete();
  
         return response()->json([
             'message' => 'Kategória bola vymazaná'

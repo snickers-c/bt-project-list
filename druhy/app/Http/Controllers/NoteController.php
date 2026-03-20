@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -13,12 +14,9 @@ class NoteController extends Controller
      */
     public function index()
     {
-        $notes = DB::table('notes')
-            ->whereNull('deleted_at')
-            ->orderBy('updated_at', 'desc')
-            ->get();
-        
-            return response()->json(['notes' => $notes], Response::HTTP_OK);
+        $notes = Note::query()->orderByDesc('updated_at')->get();
+
+        return response()->json(['notes' => $notes], Response::HTTP_OK);
     }
 
     /**
@@ -26,16 +24,13 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        DB::table('notes')->insert([
-            'user_id' => $request->user_id,
-            'title' => $request->title,
-            'body' => $request->body,
-            'created_at' => now(),
-            'updated_at' => now()
+        $note = Note::create([
+            'user_id' => $request->user_id, 'title' => $request->title, 'body' => $request->body,
         ]);
 
         return response()->json([
-            'message' => 'Poznámka bola vytvorená'
+            'message' => 'Poznámka bola vytvorená',
+            'note' => $note,
         ], Response::HTTP_CREATED);
     }
 
@@ -44,16 +39,13 @@ class NoteController extends Controller
      */
     public function show(string $id)
     {
-        $note = DB::table('notes')
-            ->whereNull('deleted_at')
-            ->where('id', $id)
-            ->first();
+        $note = Note::find($id);
 
         if (!$note) {
             return response()->json([
                 'message' => 'Poznámka nenájdená'
             ], Response::HTTP_NOT_FOUND);
-        }
+        } 
 
         return response()->json(['note' => $note], Response::HTTP_OK);
     }
@@ -63,9 +55,7 @@ class NoteController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $note = DB::table('notes')
-            ->where('id', $id)
-            ->first();
+        $note = Note::find($id);
 
         if (!$note) {
             return response()->json([
@@ -73,16 +63,14 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        DB::table('notes')
-            ->where('id', $id)
-            ->update([
-                'title' => $request->title,
-                'body' => $request->body,
-                'updated_at' => now()
-            ]);
-        
+        $note->update([
+            'title' => $request->title,
+            'body' => $request->body,
+        ]);
+
         return response()->json([
-            'message' => 'Poznámka bola aktualizovaná'
+            'message' => 'Poznámka bola aktualizovaná',
+            'note' => $note,
         ], Response::HTTP_OK);
     }
 
@@ -91,10 +79,7 @@ class NoteController extends Controller
      */
     public function destroy(string $id)
     {
-        $note = DB::table('notes')
-            ->whereNull('deleted_at')
-            ->where('id', $id)
-            ->first();
+        $note = Note::find($id);
 
         if (!$note) {
             return response()->json([
@@ -102,12 +87,7 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        DB::table('notes')
-            ->where('id', $id)
-            ->update([
-                'deleted_at' => now(),
-                'updated_at' => now()
-            ]);
+        $note->delete();
 
         return response()->json([
             'message' => 'Poznámka odstránená'
@@ -115,8 +95,7 @@ class NoteController extends Controller
     }
 
     public function statsByStatus() {
-        $stats = DB::table('notes')
-            ->select('status', DB::raw('COUNT(*) as count'))
+        $stats = Note::select('status', DB::raw('COUNT(*) as count'))
             ->groupBy('status')
             ->get();
 
@@ -124,8 +103,7 @@ class NoteController extends Controller
     }
 
     public function archiveOldDrafts() {
-        $affected = DB::table('notes')
-            ->where('status', 'draft')
+        $affected = Note::where('status', 'draft')
             ->where('updated_at', '<', now()->subDays(30))
             ->update([
                 'status' => 'archived',
@@ -139,8 +117,7 @@ class NoteController extends Controller
     }
 
     public function userNotesWithCategories(string $userId) {
-        $notes = DB::table('notes')
-            ->join('note_category', 'notes.id', '=', 'note_category.note_id')
+        $notes = Note::join('note_category', 'notes.id', '=', 'note_category.note_id')
             ->join('categories', 'note_category.category_id', '=', 'categories.id')
             ->where('notes.user_id', $userId)
             ->orderBy('notes.updated_at', 'desc')
@@ -155,16 +132,7 @@ class NoteController extends Controller
     public function search(Request $request) {
         $q = trim((string) $request->query('q', ''));
 
-        $notes = DB::table('notes')
-            ->whereNull('deleted_at')
-            ->where('status', 'published')
-            ->where(function ($x) use ($q) {
-                $x->where('title', 'like', "%{$q}%")
-                    ->orWhere('body', 'like', "%{$q}%");
-            })
-            ->orderBy('updated_at', 'desc')
-            ->limit(20)
-            ->get();
+        $notes = Note::searchPublished($q);
 
         return response()->json([
             'query' => $q,
@@ -173,9 +141,7 @@ class NoteController extends Controller
     }
 
     public function duplicate(string $id) {
-        $note = DB::table('notes')
-            ->whereNull('deleted_at')
-            ->where('id', $id)
+        $note = Note::where('id', $id)
             ->first();
 
         if (!$note) {
@@ -184,7 +150,7 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $newId = DB::table('notes')->insertGetId([
+        $newId = Note::insertGetId([
             'user_id'    => $note->user_id,
             'title'      => 'Kópia - ' . $note->title,
             'body'       => $note->body,
@@ -193,11 +159,75 @@ class NoteController extends Controller
             'updated_at' => now(),
         ]);
 
-        $newNote = DB::table('notes')->where('id', $newId)->first();
+        $newNote = Note::where('id', $newId)->first();
 
         return response()->json([
             'message' => 'Poznámka bola duplikovaná',
             'note'    => $newNote,
         ], Response::HTTP_CREATED);
+    }
+
+    public function publish(string $id) {
+        $note = Note::find($id);
+
+        if (!$note) {
+            return response()->json([
+                'message' => 'poznámka nebola nájdená',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $note->publish();
+
+        return response()->json([
+            'note' => $note,
+        ], Response::HTTP_OK);
+    }
+
+    public function archive(string $id) {
+        $note = Note::find($id);
+
+        if (!$note) {
+            return response()->json([
+                'message' => 'poznámka nenájdená',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $note->archive();
+
+        return response()->json([
+            'note' => $note,
+        ], Response::HTTP_OK);
+    }
+
+    public function pin(string $id) {
+        $note = Note::find($id);
+
+        if (!$note) {
+            return response()->json([
+                'message' => 'poznamka nenajdena'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $note->pin();
+
+        return response()->json([
+            'note' => $note, 
+        ], Response::HTTP_OK);
+    }
+
+    public function unpin(string $id) {
+        $note = Note::find($id);
+
+        if (!$note) {
+            return response()->json([
+                'message' => 'poznamka nenajdena'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $note->unpin();
+
+        return response()->json([
+            'note' => $note, 
+        ], Response::HTTP_OK);
     }
 }

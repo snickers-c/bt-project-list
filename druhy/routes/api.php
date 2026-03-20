@@ -16,6 +16,10 @@ Route::prefix('restapi')->group(function () {
     Route::get('users/{user}/notes', [NoteController::class, 'userNotesWithCategories']);
     Route::get('notes-actions/search', [NoteController::class, 'search']);
     Route::post('/notes/{id}/duplicate', [NoteController::class, 'duplicate']);
+    Route::patch('notes/{id}/publish', [NoteController::class, 'publish']);
+    Route::patch('notes/{id}/archive', [NoteController::class, 'archive']);
+    Route::patch('notes/{id}/pin', [NoteController::class, 'pin']);
+    Route::patch('notes/{id}/unpin', [NoteController::class, 'unpin']);
 });
 
 Route::prefix('restapicat')->group(function () {
