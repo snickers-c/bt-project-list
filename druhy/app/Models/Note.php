@@ -4,12 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 
 class Note extends Model
 {
     use SoftDeletes, HasFactory;
+
+    public function comments(): MorphMany {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function tasks(): HasMany {
+        return $this->hasMany(Task::class);
+    }
+
+    public function categories(): BelongsToMany {
+        return $this->belongsToMany(Category::class, 'note_category')->withTimestamps();
+    } 
+
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
+    }
 
     protected $table = 'notes';
 

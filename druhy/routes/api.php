@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,8 @@ Route::prefix('restapi')->group(function () {
     Route::patch('notes/{id}/archive', [NoteController::class, 'archive']);
     Route::patch('notes/{id}/pin', [NoteController::class, 'pin']);
     Route::patch('notes/{id}/unpin', [NoteController::class, 'unpin']);
+
+    Route::apiResource('notes.tasks', TaskController::class)->scoped();
 });
 
 Route::prefix('restapicat')->group(function () {

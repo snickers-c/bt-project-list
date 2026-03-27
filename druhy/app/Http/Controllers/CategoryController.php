@@ -26,11 +26,16 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = Category::create([
-            'name' => $request->name,
-            'color' => $request->color,
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'unique:categories,name'],
+            'color' => ['required', 'string']
         ]);
- 
+
+        $category = Category::create([
+            'name' => $validated['name'],
+            'color' => $validated['color'],
+        ]);
+
         return response()->json([
             'message' => 'Kategória bola vytvorená',
             'category' => $category,
@@ -56,7 +61,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         $category = Category::find($id);
  
@@ -75,12 +80,13 @@ class CategoryController extends Controller
                 'message' => 'Kategória s týmto názvom už existuje'
             ], Response::HTTP_CONFLICT);
         }
- 
-        $category->update([
-            'name' => $request->name,
-            'color' => $request->color,
-            'updated_at' => now(),
+
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'unique:categories,name,' . $category->id],
+            'color' => ['sometimes', 'string']
         ]);
+ 
+        $category->update($validated);
  
         return response()->json([
             'message' => 'Kategória bola aktualizovaná'

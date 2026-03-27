@@ -23,6 +23,10 @@
   - Adresár modelov: [Models](druhy/app/Models/)
   - Zadanie
     - [Notes Eloquent ORM](#notes-eloquent-orm)
+- [cvičenie 6](#cvičenie-6)
+  - na readme sa pracuje...
+  - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
+  - Testing z Postman-a [Obrázky](postman-images/cvicenie6/)
 
 # Cvičenia
 
@@ -145,3 +149,5 @@ pin
 ![image](/postman-images/cvicenie5/pin.png)
 unpin
 ![image](/postman-images/cvicenie5/unpin.png)
+
+## Cvičenie 6
