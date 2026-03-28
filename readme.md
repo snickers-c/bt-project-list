@@ -24,9 +24,11 @@
   - Zadanie
     - [Notes Eloquent ORM](#notes-eloquent-orm)
 - [cvičenie 6](#cvičenie-6)
-  - na readme sa pracuje...
-  - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
   - Testing z Postman-a [Obrázky](postman-images/cvicenie6/)
+  - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
+  - [Zadanie 1](#zadanie-6-1)
+  - [Zadanie 2](#zadanie-6-2)
+  - [Zadanie 3](#zadanie-6-3)
 
 # Cvičenia
 
@@ -151,3 +153,39 @@ unpin
 ![image](/postman-images/cvicenie5/unpin.png)
 
 ## Cvičenie 6
+
+## Zadanie 6-1
+úspešný show response
+![image](/postman-images/cvicenie6/zadanie1/uspesny.png)
+
+neúspešný show response
+![image](/postman-images/cvicenie6/zadanie1/neuspesny.png)
+
+## Zadanie 6-2
+store
+![image](/postman-images/cvicenie6/zadanie2/store.png)
+
+store duplicate
+![image](/postman-images/cvicenie6/zadanie2/store-duplicate.png)
+
+update
+![image](/postman-images/cvicenie6/zadanie2/update.png)
+
+update duplicate
+![image](/postman-images/cvicenie6/zadanie2/update-duplicate.png)
+
+## Zadanie 6-3
+index
+![image](/postman-images/cvicenie6/zadanie3/index.png)
+
+store
+![image](/postman-images/cvicenie6/zadanie3/store.png)
+
+store notfound
+![image](/postman-images/cvicenie6/zadanie3/store-notfound.png)
+
+update
+![image](/postman-images/cvicenie6/zadanie3/update.png)
+
+update missing
+![image](/postman-images/cvicenie6/zadanie3/update-missing.png)
