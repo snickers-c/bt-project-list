@@ -61,26 +61,8 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(Request $request, Category $category)
     {
-        $category = Category::find($id);
- 
-        if (!$category) {
-            return response()->json([
-                'message' => 'Kategória nenájdená'
-            ], Response::HTTP_NOT_FOUND);
-        }
- 
-        $exists = Category::where('name', $request->name)
-            ->where('id', '!=', $id)
-            ->exists();
- 
-        if ($exists) {
-            return response()->json([
-                'message' => 'Kategória s týmto názvom už existuje'
-            ], Response::HTTP_CONFLICT);
-        }
-
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'unique:categories,name,' . $category->id],
             'color' => ['sometimes', 'string']
