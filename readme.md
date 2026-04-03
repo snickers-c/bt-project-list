@@ -29,6 +29,12 @@
   - [Zadanie 1](#zadanie-6-1)
   - [Zadanie 2](#zadanie-6-2)
   - [Zadanie 3](#zadanie-6-3)
+- [cvičenie 7](#cvičenie-7)
+  - Testing z Postman-a [Obrázky](postman-images/cvicenie7/)
+  - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
+  - Súbor Auth Controller: [AuthController](druhy/app/Http/Controllers/AuthController.php)
+  - [Auth Controller](#auth-controller)
+  
 
 # Cvičenia
 
@@ -154,14 +160,14 @@ unpin
 
 ## Cvičenie 6
 
-## Zadanie 6-1
+### Zadanie 6-1
 úspešný show response
 ![image](/postman-images/cvicenie6/zadanie1/uspesny.png)
 
 neúspešný show response
 ![image](/postman-images/cvicenie6/zadanie1/neuspesny.png)
 
-## Zadanie 6-2
+### Zadanie 6-2
 store
 ![image](/postman-images/cvicenie6/zadanie2/store.png)
 
@@ -174,7 +180,7 @@ update
 update duplicate
 ![image](/postman-images/cvicenie6/zadanie2/update-duplicate.png)
 
-## Zadanie 6-3
+### Zadanie 6-3
 index
 ![image](/postman-images/cvicenie6/zadanie3/index.png)
 
@@ -189,3 +195,45 @@ update
 
 update missing
 ![image](/postman-images/cvicenie6/zadanie3/update-missing.png)
+
+## Cvičenie 7
+
+### Auth Controller
+register
+![image](/postman-images/cvicenie7/register.png)
+
+register - použítý email
+![image](/postman-images/cvicenie7/register-422.png)
+
+login
+![image](/postman-images/cvicenie7/login.png)
+
+login - rate limit
+![image](/postman-images/cvicenie7/login-rate-limit.png)
+
+me
+![image](/postman-images/cvicenie7/me.png)
+
+logout
+![image](/postman-images/cvicenie7/logout.png)
+
+removeAll
+![image](/postman-images/cvicenie7/remove-all.png)
+
+tokens
+![image](/postman-images/cvicenie7/tokens.png)
+
+tokens - remove all
+![image](/postman-images/cvicenie7/tokens-remove-all.png)
+
+changePass
+![image](/postman-images/cvicenie7/change-pass.png)
+
+login - zmenené heslo
+![image](/postman-images/cvicenie7/login-change-pass.png)
+
+changeProfile
+![image](/postman-images/cvicenie7/change-profile.png)
+
+me - zmenený profil
+![image](/postman-images/cvicenie7/me-change-profile.png)

@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     public function tasks(): HasManyThrough {
         return $this->hasManyThrough(Task::class, Note::class, 'user_id', 'note_id', 'id', 'id');
@@ -24,6 +26,14 @@ class User extends Authenticatable
 
     public function notes(): HasMany {
         return $this->hasMany(Note::class);
+    }
+
+    public function isAdmin(): bool {
+        return $this->role === 'admin';
+    }
+
+    public function hasActivePremium(): bool {
+        return $this->premium_until !== null && $this->premium_until->isFuture();
     }
 
     /**
