@@ -14,6 +14,8 @@ class TaskController extends Controller
      */
     public function index(Note $note)
     {
+        $this->authorize('view', [Task::class, $note]);
+
         $tasks = $note->tasks()->orderBy('title', 'asc')
             ->get();
  
@@ -25,6 +27,8 @@ class TaskController extends Controller
      */
     public function store(Request $request, Note $note)
     {
+        $this->authorize('create', [Task::class, $note]);
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'is_done' => ['sometimes', 'boolean'],
@@ -48,6 +52,8 @@ class TaskController extends Controller
      */
     public function show(Note $note, Task $task)
     {
+        $this->authorize('view', [Task::class, $note]);
+
         return response()->json(['task' => $task], Response::HTTP_OK);
     }
 
@@ -62,6 +68,8 @@ class TaskController extends Controller
             'due_at' => ['nullable', 'date'],
         ]);
 
+        $this->authorize('update', [Task::class, $note]);
+
         $task->update($validated);
 
         return response()->json([
@@ -75,6 +83,8 @@ class TaskController extends Controller
      */
     public function destroy(Note $note, Task $task)
     {
+        $this->authorize('delete', [Task::class, $note]);
+    
         $task->forceDelete();
 
         return response()->json([

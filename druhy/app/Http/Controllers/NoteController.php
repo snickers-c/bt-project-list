@@ -15,7 +15,35 @@ class NoteController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Note::class);
+
         $notes = Note::query()
+            ->select([
+                'id',
+                'user_id', 
+                'title',
+                'body',
+                'status',
+                'is_pinned',
+                'created_at' 
+            ])
+            ->with([
+                'user:id,first_name,last_name',
+                'categories:id,name,color',
+            ])
+            ->whereIn('status', ['published', 'archived'])
+            ->orderByDesc('is_pinned')
+            ->orderByDesc('created_at')
+            ->paginate(5);
+
+        return response()->json(['notes' => $notes], Response::HTTP_OK);
+    }
+
+    public function myNotes(Request $request)
+    {
+        $this->authorize('viewAny', Note::class);
+
+        $notes = $request->user()->notes()
             ->select([
                 'id',
                 'user_id', 
@@ -31,7 +59,7 @@ class NoteController extends Controller
             ])
             ->orderByDesc('is_pinned')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(5);
 
         return response()->json(['notes' => $notes], Response::HTTP_OK);
     }
@@ -41,6 +69,8 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Note::class);
+
         $validated = $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'title' => ['required', 'string', 'min:3', 'max:255'],
@@ -52,7 +82,7 @@ class NoteController extends Controller
         ]);
 
         $note = Note::create([
-            'user_id' => $validated['user_id'],
+            'user_id' => $request->user()->id,
             'title' => $validated['title'], 
             'body' => $validated['body'] ?? null,
             'status' => $validated['status'] ?? 'draft',
@@ -86,7 +116,9 @@ class NoteController extends Controller
             return response()->json([
                 'message' => 'Poznámka nenájdená'
             ], Response::HTTP_NOT_FOUND);
-        } 
+        }
+
+        $this->authorize('view', $note);
 
         return response()->json(['note' => $note], Response::HTTP_OK);
     }
@@ -103,6 +135,8 @@ class NoteController extends Controller
                 'message' => 'Poznámka nenájdená'
             ], Response::HTTP_NOT_FOUND);
         }
+                
+        $this->authorize('update', $note);
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'min:3', 'max:255'],
@@ -138,6 +172,8 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $this->authorize('delete', $note);
+
         $note->delete();
 
         return response()->json([
@@ -146,6 +182,8 @@ class NoteController extends Controller
     }
 
     public function statsByStatus() {
+        $this->authorize('stats', Note::class);
+
         $stats = Note::select('status', DB::raw('COUNT(*) as count'))
             ->groupBy('status')
             ->get();
@@ -153,9 +191,12 @@ class NoteController extends Controller
         return response()->json(['stats' => $stats]);
     }
 
-    public function archiveOldDrafts() {
+    public function archiveOldDrafts(Request $request) {
+        $this->authorize('archiveOldDrafts', Note::class);
+
         $affected = Note::where('status', 'draft')
             ->where('updated_at', '<', now()->subDays(30))
+            ->where('user_id', '=', $request->user()->id)
             ->update([
                 'status' => 'archived',
                 'updated_at' => now(),
@@ -168,6 +209,8 @@ class NoteController extends Controller
     }
 
     public function userNotesWithCategories(string $userId) {
+        $this->authorize('userCategories', Note::class);
+
         $notes = Note::join('note_category', 'notes.id', '=', 'note_category.note_id')
             ->join('categories', 'note_category.category_id', '=', 'categories.id')
             ->where('notes.user_id', $userId)
@@ -193,14 +236,16 @@ class NoteController extends Controller
 
     public function duplicate(string $id) {
         $note = Note::where('id', $id)
-            ->first();
-
+        ->first();
+        
         if (!$note) {
             return response()->json([
                 'message' => 'Poznámka nenájdená'
-            ], Response::HTTP_NOT_FOUND);
+            ], Response::HTTP_NOT_FOUND);        
         }
 
+        $this->authorize('duplicate', $note);
+                
         $newId = Note::insertGetId([
             'user_id'    => $note->user_id,
             'title'      => 'Kópia - ' . $note->title,
@@ -227,6 +272,8 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $this->authorize('publish', $note);
+        
         $note->publish();
 
         return response()->json([
@@ -242,6 +289,8 @@ class NoteController extends Controller
                 'message' => 'poznámka nenájdená',
             ], Response::HTTP_NOT_FOUND);
         }
+
+        $this->authorize('archive', $note);
 
         $note->archive();
 
@@ -259,6 +308,8 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $this->authorize('pin', $note);
+
         $note->pin();
 
         return response()->json([
@@ -275,6 +326,8 @@ class NoteController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        $this->authorize('unpin', $note);
+
         $note->unpin();
 
         return response()->json([
@@ -290,6 +343,8 @@ class NoteController extends Controller
                 'message' => 'poznamka nenajdena'
             ], Response::HTTP_NOT_FOUND);
         }
+
+        $this->authorize('tasks', $note);
 
         return response()->json(['tasks' => $note->tasks()->get()], Response::HTTP_OK);
     }

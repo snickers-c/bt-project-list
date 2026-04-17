@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
@@ -31,20 +32,31 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('restapi')->group(function () {
-    Route::apiResource('notes', NoteController::class);
-    Route::get('notes/stats/status', [NoteController::class, 'statsByStatus']);
-    Route::patch('notes/actions/archive-old-drafts', [NoteController::class, 'archiveOldDrafts']);
-    Route::get('users/{user}/notes', [NoteController::class, 'userNotesWithCategories']);
-    Route::get('notes-actions/search', [NoteController::class, 'search']);
-    Route::post('/notes/{id}/duplicate', [NoteController::class, 'duplicate']);
-    Route::patch('notes/{id}/publish', [NoteController::class, 'publish']);
-    Route::patch('notes/{id}/archive', [NoteController::class, 'archive']);
-    Route::patch('notes/{id}/pin', [NoteController::class, 'pin']);
-    Route::patch('notes/{id}/unpin', [NoteController::class, 'unpin']);
-
-    Route::apiResource('notes.tasks', TaskController::class)->scoped();
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('notes', NoteController::class);
+        Route::get('my-notes', [NoteController::class, 'myNotes']);
+        Route::get('notes/stats/status', [NoteController::class, 'statsByStatus']);
+        Route::patch('notes/actions/archive-old-drafts', [NoteController::class, 'archiveOldDrafts']);
+        Route::get('users/{user}/notes', [NoteController::class, 'userNotesWithCategories']);
+        Route::get('notes-actions/search', [NoteController::class, 'search']);
+        Route::post('/notes/{id}/duplicate', [NoteController::class, 'duplicate']);
+        Route::patch('notes/{id}/publish', [NoteController::class, 'publish']);
+        Route::patch('notes/{id}/archive', [NoteController::class, 'archive']);
+        Route::patch('notes/{id}/pin', [NoteController::class, 'pin']);
+        Route::patch('notes/{id}/unpin', [NoteController::class, 'unpin']);
+    
+        Route::apiResource('notes.tasks', TaskController::class)->scoped();
+        Route::apiResource('notes.comments', CommentController::class)->scoped();
+        Route::apiResource('notes.tasks.comments', CommentController::class)->scoped();
+    });
 });
 
 Route::prefix('restapicat')->group(function () {
-    Route::apiResource('categories', CategoryController::class);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+    
+        Route::middleware('admin')->group(function () {
+            Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
+        });
+    });
 });
