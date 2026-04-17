@@ -34,7 +34,12 @@
   - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
   - Súbor Auth Controller: [AuthController](druhy/app/Http/Controllers/AuthController.php)
   - [Auth Controller](#auth-controller)
-  
+- [cvičenie 8](#cvičenie-8)
+  - Testing z Postman-a [Obrázky](postman-images/cvicenie8/)
+  - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
+  - Adresár modelov: [Models](druhy/app/Models/)
+  - Adresár policies: [Policies](druhy/app/Policies/)
+  - [Zadanie 1](#zadanie-8-1)
 
 # Cvičenia
 
@@ -237,3 +242,15 @@ changeProfile
 
 me - zmenený profil
 ![image](/postman-images/cvicenie7/me-change-profile.png)
+
+## Cvičenie 8
+
+### Zadanie 8-1
+my notes
+![image](/postman-images/cvicenie8/zadanie1/my-notes.png)
+
+note delete 403
+![image](/postman-images/cvicenie8/zadanie1/note-delete-403.png)
+
+note update 403
+![image](/postman-images/cvicenie8/zadanie1/note-update-403.png)
