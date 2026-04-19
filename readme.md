@@ -39,7 +39,9 @@
   - Adresár controllerov: [Controllers](druhy/app/Http/Controllers/)
   - Adresár modelov: [Models](druhy/app/Models/)
   - Adresár policies: [Policies](druhy/app/Policies/)
+  - Api routes: [api](druhy/routes/api.php)
   - [Zadanie 1](#zadanie-8-1)
+  - [Zadanie 2](#zadanie-8-2)
 
 # Cvičenia
 
@@ -254,3 +256,34 @@ note delete 403
 
 note update 403
 ![image](/postman-images/cvicenie8/zadanie1/note-update-403.png)
+
+### Zadanie 8-2
+index
+![image](/postman-images/cvicenie8/zadanie2/index.png)
+
+store
+![image](/postman-images/cvicenie8/zadanie2/store.png)
+
+show
+![image](/postman-images/cvicenie8/zadanie2/show.png)
+
+update
+![image](/postman-images/cvicenie8/zadanie2/update.png)
+
+destroy
+![image](/postman-images/cvicenie8/zadanie2/destroy.png)
+
+index komentar pod task 
+![image](/postman-images/cvicenie8/zadanie2/index-task.png)
+
+store komentar pod task 
+![image](/postman-images/cvicenie8/zadanie2/store-task.png)
+
+show komentar pod task 
+![image](/postman-images/cvicenie8/zadanie2/show-task.png)
+
+update komentar pod task 
+![image](/postman-images/cvicenie8/zadanie2/update-task.png)
+
+destroy komentar pod task 
+![image](/postman-images/cvicenie8/zadanie2/destroy-task.png)
